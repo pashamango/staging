@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>fleetd-v2-agents — staging, на приёмку</title>
+<style>
+:root{--bg:#0b0c0a;--amber:#ffb000;--green:#39d353;--dim:#6e7681;--text:#c8ccd0}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:ui-monospace,Menlo,Consolas,monospace;padding:2rem;line-height:1.7;max-width:760px;margin:0 auto}
+h1{color:var(--amber);font-size:1.3rem;margin-bottom:.3rem}
+p.sub{color:var(--dim);font-size:.85rem;margin-bottom:2rem}
+h2{color:var(--green);font-size:1rem;margin:1.8rem 0 .6rem}
+ul{padding-left:1.2rem}
+li{margin:.4rem 0}
+a{color:var(--green);text-decoration:none;border-bottom:1px dotted var(--green)}
+a:hover{color:var(--amber);border-color:var(--amber)}
+code{background:#16181a;padding:.1rem .35rem;border-radius:4px}
+.badge{display:inline-block;border:1px solid var(--amber);color:var(--amber);padding:.2rem .6rem;border-radius:999px;font-size:.8rem;margin-bottom:1.2rem}
+footer{margin-top:3rem;color:var(--dim);font-size:.75rem}
+</style>
+</head>
+<body>
+<span class="badge">STAGING — на финальный тап, не production</span>
+<h1>fleetd-v2-agents</h1>
+<p class="sub">fleetd v2.0 + Agents.git — импорт из Gemini-бандла, тесты силами Muse, мерж в main по тапу 2026-10-26. Дата staging: 26 октября 2026.</p>
+
+<h2>Канон</h2>
+<ul>
+<li>Forgejo (tailscale, внутренний): <a href="https://darwin-on-macbookpro3-4.tail94aa6c.ts.net:3001/pasha/fleetd-v2-agents">pasha/fleetd-v2-agents</a></li>
+<li>Ветка: <code>main</code>, merge-коммит: <code>9c11c7a</code></li>
+<li>Родители мержа: genesis <code>73b6b59</code> + тесты <code>96d038d</code> (ветка <code>muse/test-2026-10-26</code>)</li>
+</ul>
+
+<h2>Что внутри</h2>
+<ul>
+<li>README — конституция роя, docs/ARCHITECTURE.md, manuals/01_routing_and_a2a.md</li>
+<li>src/fleetd_poc/router_and_a2a_poc.py — Level 1 PoC: zero-payload роутер, A2A/MCP адаптеры, Proof-of-RTFM, canary-защита</li>
+<li>hooks/pre-receive, bootstrap_agent.sh, requirements.txt, Cargo.toml (Level 2 — только манифест, кода Rust пока нет), LICENSE</li>
+<li>tests/test_router.py + TEST-REPORT.md — добавлены в merged main</li>
+</ul>
+
+<h2>Проверка на merged main</h2>
+<ul>
+<li>Свежий клон из Forgejo: unit-тесты <strong>14/14 PASS</strong></li>
+<li><code>./bootstrap_agent.sh</code>: <strong>PASS</strong>, все 4 контура</li>
+<li>Находка тестов: валидатор RTFM требует объяснение от 30 символов (403_SHALLOW_EXPLANATION) — в шапке хука не задокументировано, покрыто регрессионным тестом</li>
+</ul>
+
+<h2>Что сознательно НЕ сделано</h2>
+<ul>
+<li>Живой fleetd на Wolfram не тронут — это другая кодовая база v1, PoC v2 не является её заменой, интеграция только через адаптеры</li>
+<li>Публичное зеркало GitHub для самого репо не создано — здесь только staging-отчёт, без кода и без canary-значений</li>
+<li>Production-деплой — только по финальному тапу после этого staging</li>
+</ul>
+
+<footer>mindrock fleet · staging drafts only — production deploys are tap-gated</footer>
+</body>
+</html>
