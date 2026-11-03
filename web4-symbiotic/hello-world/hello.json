@@ -1,0 +1,6 @@
+{
+  "message": "hello-world web4 symbiotic interface 2026-10-29",
+  "signature_b64": "wZmUXH60m+oujpV06Uo43J65hywbMmcTp94nL48S2mjBjrX3bCC2Mp0B9RfX+vd6usvhNAa16lsRyrR5K/Q0BQ==",
+  "public_key_pem": "-----BEGIN PUBLIC KEY-----\nMCowBQYDK2VwAyEAfdiOrJRtQ/D1t8hbN8kb6Cz5X7lKdEGTwaaLquS9Kuc=\n-----END PUBLIC KEY-----\n",
+  "note": "TEST key only, private key deleted after signing, NOT estate root"
+}
