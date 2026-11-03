@@ -1,0 +1,890 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Single Father (Scientist's Diaries) — Prototype, Quantum 12</title>
+<style>
+  :root{
+    --paper:#faf6ef; --ink:#23201b; --muted:#6f675c; --line:#e3dccf;
+    --card:#ffffff; --accent:#a33327; --accent-soft:#f7e8e5;
+    --green:#2e6b3e; --green-soft:#e6f1e8; --gold:#b8860b; --gold-soft:#fbf3dd;
+    --radius:14px;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; background:var(--paper); color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.55; font-size:16px;
+  }
+  .wrap{max-width:920px; margin:0 auto; padding:28px 18px 64px}
+  .banner{
+    background:#23201b; color:#faf6ef; border-radius:var(--radius);
+    padding:12px 16px; font-size:13.5px; margin-bottom:20px;
+  }
+  .banner b{color:#ffd98a}
+  header.hero{
+    background:var(--card); border:1px solid var(--line); border-radius:var(--radius);
+    padding:26px 26px 22px;
+  }
+  .eyebrow{letter-spacing:.14em; text-transform:uppercase; font-size:12px; color:var(--accent); font-weight:700}
+  h1{margin:6px 0 4px; font-size:32px; line-height:1.15}
+  .tagline{color:var(--muted); margin:0 0 16px; font-size:17px}
+  .npub{
+    font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+    background:var(--gold-soft); border:1px dashed var(--gold); border-radius:8px;
+    padding:10px 12px; font-size:13.5px; word-break:break-all;
+  }
+  .npub .lbl{font-weight:700; color:var(--gold)}
+  .mirrors{display:flex; flex-wrap:wrap; gap:8px; margin-top:14px}
+  .pill{
+    border:1px solid var(--line); background:var(--paper); border-radius:999px;
+    padding:5px 12px; font-size:13.5px; font-weight:600;
+  }
+  .pill.root{border-color:var(--accent); color:var(--accent); background:var(--accent-soft)}
+  h2{font-size:21px; margin:0 0 6px}
+  section{
+    background:var(--card); border:1px solid var(--line); border-radius:var(--radius);
+    padding:22px 24px; margin-top:18px;
+  }
+  section > p.lead{color:var(--muted); margin:0 0 14px}
+  .tag{
+    display:inline-block; font-size:11px; font-weight:700; letter-spacing:.08em;
+    text-transform:uppercase; border-radius:999px; padding:3px 9px; vertical-align:middle;
+  }
+  .tag.ph{background:var(--gold-soft); color:#7a5b00; border:1px solid var(--gold)}
+  .tag.mock{background:#ece9e2; color:#555; border:1px solid #d8d2c6}
+  .tag.safe{background:var(--green-soft); color:var(--green); border:1px solid #9fc4a9}
+  /* Feet-only motif: pure CSS/SVG, abstract, no people */
+  .feet-stage{
+    border:2px dashed #b9b0a0; border-radius:var(--radius); background:#efe9dc;
+    padding:14px; margin-top:6px;
+  }
+  .feet-stage figcaption{font-size:13.5px; color:var(--muted); margin-top:8px}
+  .rule{font-size:14px; background:var(--green-soft); border:1px solid #9fc4a9; border-radius:8px; padding:10px 12px}
+  .rule b{color:var(--green)}
+  /* Track cards */
+  .grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:14px}
+  .card{border:1px solid var(--line); border-radius:12px; padding:16px; background:#fff}
+  .card h3{margin:0 0 6px; font-size:17px}
+  .card p{margin:0 0 8px; font-size:14.5px; color:#3d382f}
+  .card .meta{font-size:13px; color:var(--muted)}
+  .draft{border:1px dashed var(--gold); border-radius:10px; padding:12px 14px; background:var(--gold-soft); margin-top:12px}
+  .draft h4{margin:0 0 6px; font-size:14px}
+  .draft ol{margin:0; padding-left:20px; font-size:14px; color:#3d382f}
+  .draft ol li{margin-bottom:4px}
+  .draft-toggle{margin-top:10px; padding:7px 14px; font-size:14px}
+  .gate{
+    border:2px solid var(--accent); border-radius:12px; padding:18px; background:var(--accent-soft);
+  }
+  .gate.locked-note{font-size:14px; color:#5c2a23}
+  .adult-teaser{border:1px dashed var(--accent); border-radius:12px; padding:14px; background:#fff}
+  .adult-teaser h3{margin:0 0 6px; font-size:16px}
+  .adult-teaser p{margin:0; font-size:14.5px; color:#3d382f; font-style:italic}
+  .gate-spec{border:1px dashed var(--accent); border-radius:10px; padding:12px 14px; background:#fff; margin-top:12px}
+  .gate-spec h4{margin:0 0 6px; font-size:14px}
+  .gate-spec ol, .gate-spec ul{margin:0; padding-left:20px; font-size:14px; color:#3d382f}
+  .gate-spec li{margin-bottom:4px}
+  /* Buttons */
+  button{
+    font:inherit; cursor:pointer; border-radius:999px; border:1px solid var(--ink);
+    background:var(--ink); color:#fff; padding:9px 18px; font-weight:600; font-size:15px;
+  }
+  button:hover{opacity:.88}
+  button.secondary{background:#fff; color:var(--ink)}
+  button:disabled{opacity:.45; cursor:not-allowed}
+  button:focus-visible, a:focus-visible{outline:3px solid var(--gold); outline-offset:2px}
+  .btnrow{display:flex; flex-wrap:wrap; gap:10px; margin-top:12px}
+  /* QDN path */
+  .crumbs{font-size:13.5px; color:var(--muted); margin:0 0 10px}
+  .crumbs b{color:var(--ink)}
+  .q{font-size:19px; font-weight:700; margin:0 0 10px}
+  .options{display:flex; flex-wrap:wrap; gap:10px; margin:10px 0}
+  .opt{
+    border:1px solid var(--ink); background:#fff; color:var(--ink);
+    border-radius:12px; padding:10px 16px; font-weight:600;
+  }
+  .opt[aria-pressed="true"]{background:var(--ink); color:#fff}
+  .answer{border:1px solid var(--line); border-left:5px solid var(--green); border-radius:10px; padding:14px 16px; background:#fbfaf7}
+  .answer h3{margin:0 0 6px; font-size:16px}
+  .answer p{margin:0 0 8px; font-size:15px}
+  pre{
+    background:#23201b; color:#f2ead9; border-radius:10px; padding:14px 16px;
+    overflow-x:auto; font-size:13.5px; line-height:1.5; margin:8px 0 0;
+  }
+  pre .c{color:#9c9484}
+  /* Onboarding */
+  .steps{list-style:none; margin:12px 0 0; padding:0; counter-reset:step}
+  .steps li{
+    counter-increment:step; border:1px solid var(--line); border-radius:10px;
+    padding:12px 14px 12px 52px; position:relative; margin-bottom:8px; background:#fbfaf7;
+  }
+  .steps li::before{
+    content:counter(step); position:absolute; left:14px; top:12px; width:26px; height:26px;
+    border-radius:50%; background:var(--ink); color:#fff; text-align:center; line-height:26px;
+    font-size:13px; font-weight:700;
+  }
+  .steps li.done{border-color:var(--green); background:var(--green-soft)}
+  .steps li.done::before{background:var(--green); content:"✓"}
+  .steps li.current{border-color:var(--accent)}
+  .steps li h4{margin:0 0 2px; font-size:15px}
+  .steps li p{margin:0; font-size:14px; color:#3d382f}
+  .statusline{font-size:14px; color:var(--muted); margin-top:14px}
+  footer{margin-top:22px; font-size:13.5px; color:var(--muted)}
+  footer code{font-size:12.5px}
+  [hidden]{display:none !important}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="banner" role="note">
+    <b>QUANTUM 12 — LOCAL DRAFT.</b> Built for Vova's review only. Not deployed, not published,
+    no data collected, no real keys. Every invented line of copy is labelled
+    <b>PLACEHOLDER</b>.
+  </div>
+
+  <!-- 1. PERSONA HEADER -->
+  <header class="hero">
+    <div class="eyebrow">One persona &middot; Nostr-first &middot; Feet only</div>
+    <h1>Single Father (Scientist's Diaries)</h1>
+    <p class="tagline">
+      A father, a scientist's notebook, and a child — from cutting the umbilical cord
+      to the Russian School of Mathematics and the soccer section. Planned optimisation,
+      formalised. Nothing staged, nothing faked.
+      <span class="tag ph">PLACEHOLDER copy</span>
+    </p>
+    <div class="npub" aria-label="Placeholder Nostr identity">
+      <span class="lbl">PLACEHOLDER npub — NOT A REAL KEY:</span><br>
+      npub1placeholder000000000000000000000000000000000000000000000000000000
+      <br><span style="color:var(--muted)">No key was generated. Real identity is created only by Pavel himself, under Vova's design.</span>
+    </div>
+    <div class="mirrors" aria-label="Mirrors">
+      <span class="pill root">Nostr — canonical home</span>
+      <span class="pill">TikTok — mirror</span>
+      <span class="pill">YouTube — mirror</span>
+      <span class="pill">Instagram — mirror</span>
+    </div>
+  </header>
+
+  <!-- 2. FEET-ONLY VISUAL LANGUAGE -->
+  <section aria-labelledby="feet-h">
+    <h2 id="feet-h">The camera looks down <span class="tag safe">Hard rule</span></h2>
+    <p class="lead">No people's faces in the blog — feet only. The frame below is drawn with
+      inline SVG only: no photos, no images of people, no identifiable children.</p>
+    <figure class="feet-stage" style="margin:0">
+      <svg viewBox="0 0 640 240" width="100%" role="img"
+           aria-label="Abstract top-down camera view: a ground plane with two abstract shoe shapes at the bottom edge. No people, no faces.">
+        <rect x="6" y="6" width="628" height="228" rx="14" fill="#e9e1cf"/>
+        <!-- ground texture: abstract lines -->
+        <g stroke="#d8cdb4" stroke-width="2">
+          <line x1="40" y1="70" x2="600" y2="70"/>
+          <line x1="30" y1="120" x2="610" y2="120"/>
+          <line x1="50" y1="170" x2="590" y2="170"/>
+        </g>
+        <!-- a small abstract ball: play, not a person -->
+        <circle cx="500" cy="90" r="22" fill="#a33327"/>
+        <circle cx="500" cy="90" r="22" fill="none" stroke="#7e241b" stroke-width="3"/>
+        <path d="M482 84 Q500 96 518 84" stroke="#f7e8e5" stroke-width="3" fill="none"/>
+        <!-- two abstract shoe shapes, bottom edge, camera looking down -->
+        <g>
+          <rect x="220" y="150" width="76" height="58" rx="26" fill="#3b3a38"/>
+          <rect x="228" y="158" width="60" height="10" rx="5" fill="#6f6a62"/>
+          <rect x="344" y="150" width="76" height="58" rx="26" fill="#3b3a38"/>
+          <rect x="352" y="158" width="60" height="10" rx="5" fill="#6f6a62"/>
+        </g>
+        <!-- camera corner marks -->
+        <g stroke="#23201b" stroke-width="4" fill="none">
+          <path d="M24 34 V20 H38"/><path d="M602 20 H616 V34"/>
+          <path d="M24 206 V220 H38"/><path d="M602 220 H616 V206"/>
+        </g>
+        <text x="32" y="44" font-size="13" fill="#6f675c" font-family="sans-serif">CAMERA: TOP-DOWN</text>
+      </svg>
+      <figcaption>
+        Abstract motif only — ground, a ball, two shoe shapes. If a shot ever shows a face,
+        it does not ship. <span class="tag ph">PLACEHOLDER artwork</span>
+      </figcaption>
+    </figure>
+    <p class="rule" style="margin-top:14px"><b>Privacy boundary:</b> faces never appear. Feet and ground
+      only — no hands, no faces, never an identifiable child. If a shot shows anything else,
+      it does not ship.</p>
+  </section>
+
+  <!-- 3. TRACK SPLIT + 18+ GATE -->
+  <section aria-labelledby="tracks-h">
+    <h2 id="tracks-h">Two tracks, one gate <span class="tag mock">Gate is a mock</span></h2>
+    <p class="lead">The main track is public and for children. Adult topics live behind the gate —
+      and the gate never leaks: even behind it, this prototype shows only allegorical teasers.</p>
+
+    <h3 style="margin:14px 0 8px">Main track — public, for children
+      <span class="tag safe">No gate</span></h3>
+    <div class="grid">
+      <article class="card">
+        <h3>Where to play free today <span class="tag ph">PLACEHOLDER</span></h3>
+        <p>One question, three real options, one verified answer. A park, a library, a floor at home.</p>
+        <p class="meta">Format: short experiment video + one-line claim.</p>
+      </article>
+      <article class="card">
+        <h3>Games with trash and AI <span class="tag ph">PLACEHOLDER</span></h3>
+        <p>Cardboard, tape, a phone camera, and a model that guesses what we built.</p>
+        <p class="meta">Format: build, test, laugh, formalise.</p>
+      </article>
+      <article class="card">
+        <h3>Games in a horizontal position <span class="tag ph">PLACEHOLDER</span></h3>
+        <p>Maximum recreation per unit of parental energy. The floor is a legitimate laboratory.</p>
+        <p class="meta">Format: lying-down diary.</p>
+      </article>
+    </div>
+
+    <h3 style="margin:22px 0 8px">Adult track — sex &amp; God
+      <span class="tag mock">Behind 18+ gate</span></h3>
+    <div class="gate" id="gateBox">
+      <div id="gateLocked">
+        <p class="locked-note" style="margin:0 0 6px"><strong>18+ gate (mock).</strong> In this prototype
+          the gate is a visible door, not a verification system. Real age verification lives in the
+          closed channels, under Vova's design — not here.</p>
+        <p style="margin:0 0 4px; font-size:14.5px">Behind this gate this prototype shows
+          <em>only</em> allegorical teaser text, labelled PLACEHOLDER. No adult content is stored,
+          shipped, or linked from this page.</p>
+        <div class="btnrow">
+          <button type="button" id="gateEnter">I am 18 or older — show allegorical teasers</button>
+          <button type="button" class="secondary" id="gateLeaveTop">I am under 18 — take me back</button>
+        </div>
+      </div>
+      <div id="gateOpen" hidden>
+        <p style="margin:0 0 10px; font-size:14.5px"><strong>Gate opened (mock).</strong>
+          What follows is allegory only — the announcements' register, not the content.
+          The content itself lives in closed 18+ channels, which are not part of this prototype.</p>
+        <div class="grid">
+          <article class="adult-teaser">
+            <h3>The hushed question <span class="tag ph">PLACEHOLDER</span></h3>
+            <p>“Why is the most ordinary force in a life the least investigated one?”</p>
+          </article>
+          <article class="adult-teaser">
+            <h3>Catching something by the tail <span class="tag ph">PLACEHOLDER</span></h3>
+            <p>“If a force never shows itself as a volunteer, what experiment could still notice it?”</p>
+          </article>
+        </div>
+        <div class="btnrow">
+          <button type="button" class="secondary" id="gateLeave">Close the gate</button>
+        </div>
+      </div>
+      <button type="button" class="secondary" id="gateSpecToggle" aria-expanded="false" style="margin-top:12px">Show 18+ gate design (mock spec)</button>
+      <div class="gate-spec" id="gate-spec" hidden>
+        <h4>Gate design — mock spec, for Vova's decision <span class="tag ph">PLACEHOLDER / TBD</span></h4>
+        <ol>
+          <li><strong>Closed (default).</strong> The page loads with the gate closed. No allegorical teaser is visible, and no choice is remembered.</li>
+          <li><strong>Allegory only (in-session only).</strong> A self-declaration click opens only the two allegorical teasers above. It never opens adult content, because none exists on this page.</li>
+          <li><strong>Closed channel (not on this page).</strong> Real adult content lives in closed 18+ channels, reached separately — no link, embed, or preview from this prototype. The verification method and channel are TBD under Vova's design.</li>
+          <li><strong>Closing resets.</strong> “Close the gate” hides the teasers again. Reloading the page also closes the gate: this page stores nothing (no cookies, no local storage, no age record).</li>
+        </ol>
+        <p style="margin:10px 0 6px; font-size:14px"><strong>The gate must never:</strong></p>
+        <ul>
+          <li>collect a date of birth, ID, photo, or any personal data;</li>
+          <li>remember an age declaration across visits or share it with a mirror platform;</li>
+          <li>leak, link, or preview adult content to the public track;</li>
+          <li>let an allegorical teaser be mistaken for the content itself.</li>
+        </ul>
+        <p style="margin:8px 0 0; font-size:13.5px; color:var(--muted)">Open questions for Vova (TBD, not decided here): real age-verification method; closed-channel platform; moderator's role at the gate. Nothing here is a verification system.</p>
+      </div>
+      <p class="statusline" id="gateStatus">Gate status: closed.</p>
+    </div>
+  </section>
+
+  <!-- 4. QUESTION-DRIVEN NAVIGATION -->
+  <section aria-labelledby="qdn-h">
+    <h2 id="qdn-h">Question-driven navigation <span class="tag mock">Working demo</span></h2>
+    <p class="lead">The pressing question is the navigation. Click the question, pick a branch,
+      and the path resolves to a pragmatic answer plus a formalised claim.</p>
+
+    <p class="crumbs" id="crumbs">Path: <b>—</b></p>
+    <div class="options" role="group" aria-label="Pressing questions" style="margin:0 0 10px">
+      <button type="button" class="opt q-switch" data-question="play" aria-pressed="true">Where can a child play free today?</button>
+      <button type="button" class="opt q-switch" data-question="trash" aria-pressed="false">What can we build from trash and AI today?</button>
+      <button type="button" class="opt q-switch" data-question="devices" aria-pressed="false">What can a device do with a child — without taking over?</button>
+      <button type="button" class="opt q-switch" data-question="horizontal" aria-pressed="false">What can we play lying down — in a horizontal position?</button>
+      <button type="button" class="opt q-switch" data-question="nothing" aria-pressed="false">What can we play with nothing at all — no toys, no screens, no materials?</button>
+      <button type="button" class="opt q-switch" data-question="waiting" aria-pressed="false">How can waiting time become play?</button>
+      <button type="button" class="opt q-switch" data-question="failure" aria-pressed="false">What do we do when the experiment fails?</button>
+      <button type="button" class="opt q-switch" data-question="rain" aria-pressed="false">What can we play outside when it rains?</button>
+    </div>
+    <p class="q"><span id="questionText">“Where can a child play free today?”</span> <span class="tag ph">PLACEHOLDER question</span></p>
+    <div class="btnrow" style="margin-top:0">
+      <button type="button" id="pathStart">Follow the question</button>
+      <button type="button" class="secondary" id="pathReset" disabled>Reset the path</button>
+    </div>
+
+    <div id="pathOptions" hidden>
+      <p style="margin:14px 0 4px; font-weight:600">Step 2 — pick a branch:</p>
+      <div class="options" id="branches-play" role="group" aria-label="Branches">
+        <button type="button" class="opt" data-branch="park">A park nearby</button>
+        <button type="button" class="opt" data-branch="library">The library</button>
+        <button type="button" class="opt" data-branch="floor">The floor at home</button>
+      </div>
+      <div class="options" id="branches-trash" role="group" aria-label="Branches" hidden>
+        <button type="button" class="opt" data-branch="cardboard">Cardboard build</button>
+        <button type="button" class="opt" data-branch="camera">Tape and phone camera</button>
+        <button type="button" class="opt" data-branch="retell">Retell and guess</button>
+      </div>
+      <div class="options" id="branches-devices" role="group" aria-label="Branches" hidden>
+        <button type="button" class="opt" data-branch="timer">Timer and mission</button>
+        <button type="button" class="opt" data-branch="recorder">Record and listen back</button>
+        <button type="button" class="opt" data-branch="mapwalk">Map walk</button>
+      </div>
+      <div class="options" id="branches-horizontal" role="group" aria-label="Branches" hidden>
+        <button type="button" class="opt" data-branch="floorlab">Floor laboratory</button>
+        <button type="button" class="opt" data-branch="ceiling">Ceiling stories</button>
+        <button type="button" class="opt" data-branch="slowbuild">Slow flat build</button>
+      </div>
+      <div class="options" id="branches-nothing" role="group" aria-label="Branches" hidden>
+        <button type="button" class="opt" data-branch="wordplay">Word games</button>
+        <button type="button" class="opt" data-branch="counting">Counting games</button>
+        <button type="button" class="opt" data-branch="pretend">Pretend worlds</button>
+      </div>
+      <div class="options" id="branches-waiting" role="group" aria-label="Branches" hidden>
+        <button type="button" class="opt" data-branch="queue">Queue games</button>
+        <button type="button" class="opt" data-branch="errand">Errand missions</button>
+        <button type="button" class="opt" data-branch="waitstory">Waiting stories</button>
+      </div>
+      <div class="options" id="branches-failure" role="group" aria-label="Branches" hidden>
+        <button type="button" class="opt" data-branch="changeq">Change the question</button>
+        <button type="button" class="opt" data-branch="shrink">Shrink the test</button>
+        <button type="button" class="opt" data-branch="stopnote">Stop and write it down</button>
+      </div>
+      <div class="options" id="branches-rain" role="group" aria-label="Branches" hidden>
+        <button type="button" class="opt" data-branch="puddle">Puddle walk</button>
+        <button type="button" class="opt" data-branch="porch">Covered porch games</button>
+        <button type="button" class="opt" data-branch="window">Window weather watch</button>
+      </div>
+    </div>
+
+    <div id="pathAnswer" class="answer" hidden>
+      <h3 id="answerTitle"></h3>
+      <p id="answerBody"></p>
+      <p style="margin:0; font-size:13.5px; color:var(--muted)">Formalised claim, LaTeX–Lean hybrid
+        <span class="tag ph">PLACEHOLDER formalisation</span></p>
+      <pre id="answerClaim"></pre>
+    </div>
+  </section>
+
+  <!-- 5. PER-PLATFORM FORMATS -->
+  <section aria-labelledby="formats-h">
+    <h2 id="formats-h">One story, four strengths</h2>
+    <p class="lead">Formats are per-platform, each on that platform's strength. Nostr is canonical;
+      the rest are mirrors, cut to fit. Each card now carries a PLACEHOLDER draft outline — structure only.</p>
+    <div class="grid">
+      <article class="card">
+        <h3>TikTok <span class="tag ph">PLACEHOLDER</span></h3>
+        <p><strong>Strength:</strong> the hook. Vertical short: stakes in the first 3 seconds, one
+          experiment, one result, feet in frame.</p>
+        <p class="meta">Format: 30–60 s hook video. Retention is the metric.</p>
+        <button type="button" class="secondary draft-toggle" data-draft="draft-tiktok" aria-expanded="false">Show PLACEHOLDER draft outline</button>
+        <div class="draft" id="draft-tiktok" hidden>
+          <h4>PLACEHOLDER draft outline — structure only, no finished copy</h4>
+          <ol>
+            <li>0–3 s: stakes + the pressing question, feet in frame.</li>
+            <li>3–15 s: experiment setup — what is being tested, with what is at hand.</li>
+            <li>15–45 s: the test itself + the result, whatever it is.</li>
+            <li>45–60 s: one question back to viewers + pointer to the Nostr canon.</li>
+          </ol>
+        </div>
+      </article>
+      <article class="card">
+        <h3>YouTube <span class="tag ph">PLACEHOLDER</span></h3>
+        <p><strong>Strength:</strong> the arc. Long-form diaries: a question carried across a whole day,
+          with the formalised claim at the end.</p>
+        <p class="meta">Format: 8–15 min diary episode. The experiment keeps its promise.</p>
+        <button type="button" class="secondary draft-toggle" data-draft="draft-youtube" aria-expanded="false">Show PLACEHOLDER draft outline</button>
+        <div class="draft" id="draft-youtube" hidden>
+          <h4>PLACEHOLDER draft outline — structure only, no finished copy</h4>
+          <ol>
+            <li>Cold open: the pressing question, stated in one sentence.</li>
+            <li>Morning: the experiment, as it actually happens — including what fails.</li>
+            <li>Midday: retry or reframe, with the child choosing the next step.</li>
+            <li>Close: the formalised claim + the next question the episode leaves open.</li>
+          </ol>
+        </div>
+      </article>
+      <article class="card">
+        <h3>Instagram <span class="tag ph">PLACEHOLDER</span></h3>
+        <p><strong>Strength:</strong> the still. Reels for the hook; carousels for the claim —
+          one slide per step of the path, feet only.</p>
+        <p class="meta">Format: reel + 5-slide carousel. The carousel is the proof sketch.</p>
+        <button type="button" class="secondary draft-toggle" data-draft="draft-instagram" aria-expanded="false">Show PLACEHOLDER draft outline</button>
+        <div class="draft" id="draft-instagram" hidden>
+          <h4>PLACEHOLDER draft outline — structure only, no finished copy</h4>
+          <ol>
+            <li>Slide 1: the pressing question.</li>
+            <li>Slide 2: the options considered.</li>
+            <li>Slide 3: the experiment, feet only.</li>
+            <li>Slide 4: the result.</li>
+            <li>Slide 5: the formalised claim + pointer to the Nostr canon.</li>
+          </ol>
+        </div>
+      </article>
+      <article class="card">
+        <h3>Nostr <span class="tag ph">PLACEHOLDER</span></h3>
+        <p><strong>Strength:</strong> the canon. Long-form notes under the one persona; mirrors point
+          back here. No algorithm owns the archive.</p>
+        <p class="meta">Format: canonical long-form note + discussion thread. Identity is the root.</p>
+        <button type="button" class="secondary draft-toggle" data-draft="draft-nostr" aria-expanded="false">Show PLACEHOLDER draft outline</button>
+        <div class="draft" id="draft-nostr" hidden>
+          <h4>PLACEHOLDER draft outline — structure only, no finished copy</h4>
+          <ol>
+            <li>Title + the pressing question.</li>
+            <li>The experiment and what actually happened.</li>
+            <li>The result and the formalised claim.</li>
+            <li>The discussion-group question for this channel.</li>
+            <li>Mirror list: where the short cuts live, pointing back here.</li>
+          </ol>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- 6. DISCUSSION-GROUP ONBOARDING -->
+  <section aria-labelledby="group-h">
+    <h2 id="group-h">Discussion-group onboarding <span class="tag mock">Mock — no signup</span></h2>
+    <p class="lead">Every channel has its own discussion group. A moderator and one pressing question
+      do the onboarding — a person joins a conversation, not an audience. Pick a channel's group
+      below; each group has its own moderator slot and its own pressing question.</p>
+    <div class="options" role="group" aria-label="Discussion groups by channel" style="margin:0 0 12px">
+      <button type="button" class="opt group-btn" data-group="nostr" aria-pressed="true">Nostr — Free Play</button>
+      <button type="button" class="opt group-btn" data-group="tiktok" aria-pressed="false">TikTok — Hook Lab</button>
+      <button type="button" class="opt group-btn" data-group="youtube" aria-pressed="false">YouTube — Diary Circle</button>
+      <button type="button" class="opt group-btn" data-group="instagram" aria-pressed="false">Instagram — Proof Sketch</button>
+    </div>
+    <article class="card">
+      <h3 id="groupName">Free Play — parents' group <span class="tag ph">PLACEHOLDER</span></h3>
+      <p>Moderator: <strong id="groupModerator">PLACEHOLDER name</strong> <span class="tag mock">Slot — person TBD</span></p>
+      <p>Pressing question: <strong id="groupQuestion">“What did your child play today that cost nothing?”</strong> <span class="tag ph">PLACEHOLDER</span></p>
+      <div class="btnrow">
+        <button type="button" id="joinBtn">Join the group (mock)</button>
+      </div>
+      <ol class="steps" id="onboardSteps" hidden>
+        <li data-step="1">
+          <h4>Read the pressing question</h4>
+          <p>One question, out loud, before anything else. If it does not press you, this is not your group.</p>
+        </li>
+        <li data-step="2">
+          <h4>Answer in one sentence</h4>
+          <p>In the real group you would answer the question in one sentence. Here, nothing is sent or stored.</p>
+        </li>
+        <li data-step="3">
+          <h4>The moderator welcomes you</h4>
+          <p>The moderator replies to your sentence and points you to the track that fits. That is the whole onboarding.</p>
+        </li>
+      </ol>
+      <div class="btnrow" id="onboardNav" hidden>
+        <button type="button" id="nextStepBtn">Next onboarding step</button>
+        <button type="button" class="secondary" id="leaveGroupBtn">Leave the group (mock)</button>
+      </div>
+      <p class="statusline" id="groupStatus">Status: not joined. No data is collected by this page.</p>
+    </article>
+  </section>
+
+  <!-- 7. NOSTR IDENTITY ANCHOR — DESIGN PROPOSAL FOR VOVA -->
+  <section aria-labelledby="identity-h">
+    <h2 id="identity-h">Nostr identity anchor <span class="tag mock">Design proposal for Vova — PLACEHOLDER / TBD</span></h2>
+    <p class="lead">One persona, one root identity. This prototype publishes nothing and proves
+      nothing: it only shows the anchor design Vova is asked to decide. The placeholder npub in
+      the header is the only identity string on this page, and it is not a key.</p>
+    <div class="grid">
+      <article class="card">
+        <h3>Placeholder only <span class="tag ph">PLACEHOLDER</span></h3>
+        <p>The header shows one clearly-marked placeholder npub. It was not generated, it is not
+          a real key, and it must never be used to publish, sign, or verify anything.</p>
+        <p class="meta">No second identity string is introduced here, so the placeholder cannot drift into a second persona.</p>
+      </article>
+      <article class="card">
+        <h3>Key ceremony — Pavel only <span class="tag mock">TBD by Vova</span></h3>
+        <p>The real identity is created only by Pavel himself, under Vova's design. Agents never
+          generate, store, transmit, or see a private key, and no key ever enters this repo, this
+          file, or browser storage.</p>
+        <p class="meta">Ceremony method, backup, and recovery: TBD under Vova's design.</p>
+      </article>
+      <article class="card">
+        <h3>Relays &amp; publishing — none from here <span class="tag mock">TBD by Vova</span></h3>
+        <p>This page makes no network calls and sends nothing to any relay. Relay list, canonical
+          note format, and mirror pointers are TBD; mirrors point back to the Nostr canon.</p>
+        <p class="meta">Until Vova decides, there is no live Nostr part — staging mock only.</p>
+      </article>
+      <article class="card">
+        <h3>Verification &amp; rotation <span class="tag mock">TBD by Vova</span></h3>
+        <p>How a follower verifies this is the same persona, and how the identity rotates or is
+          revoked if compromised, are open questions for Vova. The placeholder must never be
+          presented as verified.</p>
+        <p class="meta">Verification method and revocation path: TBD, not decided here.</p>
+      </article>
+    </div>
+    <button type="button" class="secondary draft-toggle" data-draft="identity-spec" aria-expanded="false" style="margin-top:14px">Show identity-anchor spec (proposal for Vova)</button>
+    <div class="draft" id="identity-spec" hidden>
+      <h4>Identity-anchor spec — proposal, for Vova's decision <span class="tag ph">PLACEHOLDER / TBD</span></h4>
+      <ol>
+        <li><strong>One root, one string.</strong> One persona, one public identity string. The placeholder in the header stands in until Pavel's ceremony replaces it — by Vova's decision, never by an agent edit that invents a key.</li>
+        <li><strong>No publishing from the prototype.</strong> No relay calls, no signing, no posting from this page, in any state. Publishing is a separate, tap-gated step under Vova.</li>
+        <li><strong>No key material anywhere in the draft.</strong> No private key, seed, or recovery phrase in files, comments, storage, or messages. If key material ever appears in a draft, the draft does not ship.</li>
+        <li><strong>Placeholder stays labelled.</strong> Wherever the placeholder string appears, its PLACEHOLDER / NOT A REAL KEY label travels with it. It is never shown bare as if it were an identity.</li>
+      </ol>
+      <p style="margin:10px 0 6px; font-size:14px"><strong>The anchor must never:</strong></p>
+      <ul>
+        <li>let an agent generate, hold, or relay a real key;</li>
+        <li>publish, or pretend to publish, a note to any relay;</li>
+        <li>present the placeholder as verified, followed, or already live;</li>
+        <li>collect or store any follower, relay, or identity data from this page.</li>
+      </ul>
+      <p style="margin:8px 0 0; font-size:13.5px; color:var(--muted)">Open questions for Vova (TBD, not decided here): relay list; canonical note kind/format; key-ceremony method; verification and rotation/revocation path. Nothing here is a live Nostr identity.</p>
+    </div>
+    <p class="statusline">Identity-anchor status: proposal only. No key, no relay, no publication.</p>
+  </section>
+
+  <footer>
+    <p><strong>Prototype status — Quantum 13, local only.</strong> File: <code>prototype/index.html</code>.
+      No deploy, no staging URL yet — Vova decides the staging destination (repo + branch + path + live URL).
+      No external assets, fonts, scripts, or network calls. No real Nostr keys. No faces anywhere.
+      All invented copy is labelled PLACEHOLDER. Quantum 13 adds an eighth pressing question in section 4 — “What can we play outside when it rains?” (PLACEHOLDER) — with three new branches (Puddle walk / Covered porch games / Window weather watch) reusing the answer + formalised-claim pattern, plus a question switcher that fully resets the path when switching questions, now across 8 questions / 24 branches.</p>
+    <p>Charter: <code>~/workspace/single-father/CHARTER.md</code> · Progress: <code>~/workspace/single-father/PROGRESS.md</code></p>
+  </footer>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ---------- 3. 18+ gate (mock: reveals allegory only, never content) ---------- */
+  var gateLocked = document.getElementById("gateLocked");
+  var gateOpen = document.getElementById("gateOpen");
+  var gateStatus = document.getElementById("gateStatus");
+  function setGate(open){
+    gateLocked.hidden = open;
+    gateOpen.hidden = !open;
+    gateStatus.textContent = open
+      ? "Gate status: open (mock). Only allegorical teasers are shown — no adult content exists on this page."
+      : "Gate status: closed.";
+  }
+  document.getElementById("gateEnter").addEventListener("click", function(){ setGate(true); });
+  document.getElementById("gateLeave").addEventListener("click", function(){ setGate(false); });
+  document.getElementById("gateLeaveTop").addEventListener("click", function(){
+    gateStatus.textContent = "Gate status: closed. You stayed on the public track — good choice for under-18s.";
+    document.getElementById("tracks-h").scrollIntoView({behavior:"smooth", block:"start"});
+  });
+  /* Gate design spec toggle (mock spec only; opening it never opens content). */
+  var gateSpecBtn = document.getElementById("gateSpecToggle");
+  var gateSpec = document.getElementById("gate-spec");
+  gateSpecBtn.addEventListener("click", function(){
+    var open = gateSpec.hidden;
+    gateSpec.hidden = !open;
+    gateSpecBtn.setAttribute("aria-expanded", open ? "true" : "false");
+    gateSpecBtn.textContent = open ? "Hide 18+ gate design (mock spec)" : "Show 18+ gate design (mock spec)";
+  });
+
+  /* ---------- 4. Question-driven navigation ---------- */
+  var BRANCHES = {
+    park: {
+      title: "A park nearby — answer",
+      body: "Pragmatic answer (PLACEHOLDER): walk to the nearest playground before noon, when it is empty. Bring water and one ball. Cost: zero. The experiment: does an empty playground hold attention longer than a full one?",
+      claim: "-- PLACEHOLDER formalisation (LaTeX-Lean hybrid)\ntheorem free_play_park (kid : Child) (t : Time) (h : t < noon) :\n    ∃ p : Playground, Free p ∧ HoldsAttention p kid := by\n  exact ⟨nearest_park, free_park, empty_morning_holds⟩"
+    },
+    library: {
+      title: "The library — answer",
+      body: "Pragmatic answer (PLACEHOLDER): the children's room runs free play and reading hours; ask the desk for today's schedule. Cost: zero. The experiment: one book chosen by the child, read aloud twice, retold by the child once.",
+      claim: "-- PLACEHOLDER formalisation (LaTeX-Lean hybrid)\ntheorem free_play_library (kid : Child) (b : Book) (h : ChosenBy kid b) :\n    ∃ s : Story, RetoldBy kid s ∧ Cost s = 0 := by\n  exact ⟨read_twice_retell b, retell_proof b, free_library⟩"
+    },
+    floor: {
+      title: "The floor at home — answer",
+      body: "Pragmatic answer (PLACEHOLDER): clear one square metre, add cardboard and tape, and play in a horizontal position. Cost: zero. The experiment: the floor is a laboratory — what gets built before the tape runs out?",
+      claim: "-- PLACEHOLDER formalisation (LaTeX-Lean hybrid)\ntheorem free_play_floor (kid : Child) (m : Metre²) (h : m = 1) :\n    ∃ g : Game, BuiltFrom g cardboard ∧ Fun g := by\n  exact ⟨tape_and_box, built_from_trash, horizontal_fun⟩"
+    },
+    cardboard: {
+      title: "Cardboard build — answer",
+      body: "Pragmatic answer (PLACEHOLDER): take one cardboard box, tape, and crayons — an adult handles any cutting. Build whatever the box suggests, then test whether it stands, rolls, or holds a toy. Cost: zero. The experiment: what does the box become before the tape runs out?",
+      claim: "-- PLACEHOLDER formalisation (LaTeX-Lean hybrid)\ntheorem trash_build_cardboard (kid : Child) (box : Cardboard) :\n    ∃ b : Build, MadeFrom b box ∧ Playable b := by\n  exact ⟨box_fort, made_from_box, playable_fort⟩"
+    },
+    camera: {
+      title: "Tape and phone camera — answer",
+      body: "Pragmatic answer (PLACEHOLDER): tape the phone camera to a fixed spot, film the build in one take, and ask a model to guess what was built from the footage. Cost: zero. The experiment: can the model name the build from the tape-and-cardboard alone, with no hints?",
+      claim: "-- PLACEHOLDER formalisation (LaTeX-Lean hybrid)\ntheorem trash_build_camera (kid : Child) (v : Video) (h : Filmed v) :\n    ∃ g : Guess, ModelGuesses g v ∧ Correct g := by\n  exact ⟨model_guess, guessed_from_footage, correct_guess⟩"
+    },
+    retell: {
+      title: "Retell and guess — answer",
+      body: "Pragmatic answer (PLACEHOLDER): the child retells what was built, in their own words, while the model listens and guesses the build. Cost: zero. The experiment: does the retelling alone carry enough detail for the model to guess right — and what detail was the clue?",
+      claim: "-- PLACEHOLDER formalisation (LaTeX-Lean hybrid)\ntheorem trash_build_retell (kid : Child) (s : Story) (h : ToldBy kid s) :\n    ∃ g : Guess, ModelGuesses g s ∧ ClueIn g s := by\n  exact ⟨model_guess, guessed_from_retelling, clue_in_story⟩"
+    },
+    timer: {
+      title: "Timer and mission — answer",
+      body: "Pragmatic answer (PLACEHOLDER): the phone is a timer only, face down, for ten minutes. The mission: tidy one shelf into a shop before the timer rings, with an adult present. Cost: zero. The experiment: does a visible countdown make the same tidy-up faster — or just louder?",
+      claim: "-- PLACEHOLDER formalisation (LaTeX-Lean hybrid)\ntheorem device_timer (kid : Child) (m : Minutes) (h : m = 10) :\n    ∃ t : Task, DoneBy kid t ∧ ScreenTime t = 0 := by\n  exact ⟨tidy_mission, timer_only, face_down⟩"
+    },
+    recorder: {
+      title: "Record and listen back — answer",
+      body: "Pragmatic answer (PLACEHOLDER): record the child telling one story, then play it back once and ask what to change. The screen stays off; only the voice is kept, and only for this session. Cost: zero. The experiment: does hearing their own story change what the child adds next time?",
+      claim: "-- PLACEHOLDER formalisation (LaTeX-Lean hybrid)\ntheorem device_recorder (kid : Child) (s : Story) (h : ToldBy kid s) :\n    ∃ s' : Story, RetoldBy kid s' ∧ Differs s' s := by\n  exact ⟨listen_back, retold_after_hearing, one_session_only⟩"
+    },
+    mapwalk: {
+      title: "Map walk — answer",
+      body: "Pragmatic answer (PLACEHOLDER): the adult holds the phone; the child reads the map and chooses the next turn on a walk around the block. One walk, one destination chosen by the child. Cost: zero. The experiment: does choosing the turns make the same block feel like a new place?",
+      claim: "-- PLACEHOLDER formalisation (LaTeX-Lean hybrid)\ntheorem device_mapwalk (kid : Child) (w : Walk) (h : ChosenBy kid w) :\n    ∃ r : Route, Walked kid r ∧ NewTo kid r := by\n  exact ⟨chosen_turns, same_block_new_place, adult_holds_phone⟩"
+    },
+    floorlab: {
+      title: "Floor laboratory — answer",
+      body: "Pragmatic answer (PLACEHOLDER): lie on the floor together and declare one square metre a laboratory. No getting up, no fetching: only what is already within arm's reach counts as equipment. Cost: zero. The experiment: what gets discovered, sorted, or built before anyone wants to stand up?",
+      claim: "-- PLACEHOLDER formalisation (LaTeX-Lean hybrid)\ntheorem horizontal_floorlab (kid : Child) (m : Metre²) (h : m = 1) :\n    ∃ d : Discovery, MadeLyingDown d ∧ Fun d := by\n  exact ⟨arm_reach_only, floor_is_lab, lying_down_fun⟩"
+    },
+    ceiling: {
+      title: "Ceiling stories — answer",
+      body: "Pragmatic answer (PLACEHOLDER): lie side by side, look at the ceiling, and take turns adding one sentence to a story — the ceiling is the sky, the lamp is the sun, a crack is a river. Cost: zero. The experiment: does a story told lying down go somewhere a story told sitting down would not?",
+      claim: "-- PLACEHOLDER formalisation (LaTeX-Lean hybrid)\ntheorem horizontal_ceiling (kid : Child) (s : Story) (h : ToldLyingDown s) :\n    ∃ s' : Story, ContinuedBy kid s' ∧ Differs s' s := by\n  exact ⟨ceiling_as_sky, one_sentence_each, lying_down_story⟩"
+    },
+    slowbuild: {
+      title: "Slow flat build — answer",
+      body: "Pragmatic answer (PLACEHOLDER): build flat, on the floor, lying down: cardboard pieces, tape, and crayons, assembled at floor level with no tower to fall. An adult handles any cutting. Cost: zero. The experiment: does building slowly, flat, and lying down produce something a fast upright build would miss?",
+      claim: "-- PLACEHOLDER formalisation (LaTeX-Lean hybrid)\ntheorem horizontal_slowbuild (kid : Child) (b : Build) (h : BuiltFlat b) :\n    ∃ b' : Build, MadeFrom b' cardboard ∧ Playable b' := by\n  exact ⟨flat_on_floor, slow_and_lying_down, playable_flat⟩"
+    },
+    wordplay: {
+      title: "Word games — answer",
+      body: "Pragmatic answer (PLACEHOLDER): play with words only — take turns naming animals, rhymes, or opposites, with no toys, no screens, and nothing to fetch. Cost: zero. The experiment: how many turns last before someone repeats a word, and what rule keeps the game going?",
+      claim: "-- PLACEHOLDER formalisation (LaTeX-Lean hybrid)\ntheorem nothing_wordplay (kid : Child) (w : Words) (h : NoMaterials w) :\n    ∃ g : Game, PlayedWith g w ∧ Fun g := by\n  exact ⟨words_only, no_toys_no_screens, turn_taking⟩"
+    },
+    counting: {
+      title: "Counting games — answer",
+      body: "Pragmatic answer (PLACEHOLDER): count what is already there — steps on a walk, windows on a building, red cars passing — and guess the total before you arrive. Cost: zero. The experiment: does guessing first make the counting last longer than counting without a guess?",
+      claim: "-- PLACEHOLDER formalisation (LaTeX-Lean hybrid)\ntheorem nothing_counting (kid : Child) (n : Nat) (h : Counted kid n) :\n    ∃ g : Guess, GuessedBefore kid g ∧ CloseTo g n := by\n  exact ⟨guess_the_total, count_what_is_there, walk_and_count⟩"
+    },
+    pretend: {
+      title: "Pretend worlds — answer",
+      body: "Pragmatic answer (PLACEHOLDER): invent a world with nothing but talk — the pavement is a river, the bench is a boat, and every passer-by is a character with one line. Cost: zero. The experiment: does a world made only of words hold attention as long as a world made of things?",
+      claim: "-- PLACEHOLDER formalisation (LaTeX-Lean hybrid)\ntheorem nothing_pretend (kid : Child) (w : World) (h : MadeOfWords w) :\n    ∃ g : Game, PlayedIn g w ∧ HoldsAttention g kid := by\n  exact ⟨words_only_world, pavement_is_river, pretend_holds⟩"
+    },
+    queue: {
+      title: "Queue games — answer",
+      body: "Pragmatic answer (PLACEHOLDER): turn a queue into a game — count the people ahead, guess how long the wait will be, and invent a rhyme for each minute, feet planted and an adult beside the child. Cost: zero. The experiment: does guessing the wait first make the queue feel shorter than waiting without a guess?",
+      claim: "-- PLACEHOLDER formalisation (LaTeX-Lean hybrid)\ntheorem waiting_queue (kid : Child) (q : Queue) (h : WaitsWith kid q) :\n    ∃ g : Game, PlayedWhileWaiting g q ∧ Fun g := by\n  exact ⟨guess_the_wait, queue_is_game, waiting_as_play⟩"
+    },
+    errand: {
+      title: "Errand missions — answer",
+      body: "Pragmatic answer (PLACEHOLDER): turn an errand into a mission — the adult holds the list, the child finds one item and stays beside the adult, carrying nothing heavy. Cost: zero. The experiment: does a mission make the same errand feel like play — and what does the child find first?",
+      claim: "-- PLACEHOLDER formalisation (LaTeX-Lean hybrid)\ntheorem waiting_errand (kid : Child) (e : Errand) (h : WithAdult kid e) :\n    ∃ m : Mission, DoneBy kid m ∧ Cost m = 0 := by\n  exact ⟨find_one_item, adult_beside, mission_as_play⟩"
+    },
+    waitstory: {
+      title: "Waiting stories — answer",
+      body: "Pragmatic answer (PLACEHOLDER): tell a waiting story in turns — one sentence each, the room is the setting, and the waiting itself is the plot, with an adult present. Cost: zero. The experiment: does a story told while waiting end before the waiting does — or does the waiting end first?",
+      claim: "-- PLACEHOLDER formalisation (LaTeX-Lean hybrid)\ntheorem waiting_stories (kid : Child) (s : Story) (h : ToldWhileWaiting s) :\n    ∃ g : Game, PlayedWith g s ∧ HoldsAttention g kid := by\n  exact ⟨one_sentence_each, waiting_is_plot, story_holds⟩"
+    },
+    changeq: {
+      title: "Change the question — answer",
+      body: "Pragmatic answer (PLACEHOLDER): when the experiment fails, change the question, not the child. Ask what the failure showed instead of what was planned: the box fell, so the question becomes what shape stands. Cost: zero. The experiment: does a new question, written down in one sentence, rescue the same materials?",
+      claim: "-- PLACEHOLDER formalisation (LaTeX-Lean hybrid)\ntheorem failure_changeq (kid : Child) (e : Experiment) (h : Failed e) :\n    ∃ q : Question, Asked q ∧ UsesSameMaterials q e := by\n  exact ⟨what_failure_showed, new_question_one_sentence, same_materials⟩"
+    },
+    shrink: {
+      title: "Shrink the test — answer",
+      body: "Pragmatic answer (PLACEHOLDER): make the test smaller until it can succeed: one minute instead of ten, one piece of cardboard instead of a fort, one guess instead of a whole game, with an adult beside the child. Cost: zero. The experiment: does the smallest version that works tell you what the big version was missing?",
+      claim: "-- PLACEHOLDER formalisation (LaTeX-Lean hybrid)\ntheorem failure_shrink (kid : Child) (e : Experiment) (h : Failed e) :\n    ∃ e' : Experiment, Smaller e' e ∧ Succeeds e' := by\n  exact ⟨one_minute_one_piece, smallest_that_works, adult_beside⟩"
+    },
+    stopnote: {
+      title: "Stop and write it down — answer",
+      body: "Pragmatic answer (PLACEHOLDER): stop the experiment and write down, in one sentence each, what was tried, what happened, and what to try next — the failure is the result, and it is reported honestly, not hidden. Cost: zero. The experiment: does writing the failure down make the next attempt start from knowledge instead of from scratch?",
+      claim: "-- PLACEHOLDER formalisation (LaTeX-Lean hybrid)\ntheorem failure_stopnote (kid : Child) (e : Experiment) (h : Failed e) :\n    ∃ r : Record, Honest r e ∧ NextFrom r := by\n  exact ⟨one_sentence_each, failure_is_result, next_from_knowledge⟩"
+    },
+    puddle: {
+      title: "Puddle walk — answer",
+      body: "Pragmatic answer (PLACEHOLDER): put on boots, stay beside an adult, and walk a short route that the child chooses, stepping only where the adult can see. Feet and ground only, no faces in frame. Cost: zero. The experiment: does choosing the route make the same wet block feel like a new place?",
+      claim: "-- PLACEHOLDER formalisation (LaTeX-Lean hybrid)\ntheorem rain_puddle (kid : Child) (r : Route) (h : WithAdult kid r) :\n    ∃ w : Walk, Walked kid w ∧ Cost w = 0 := by\n  exact ⟨chosen_route, boots_and_adult, wet_block_new_place⟩"
+    },
+    porch: {
+      title: "Covered porch games — answer",
+      body: "Pragmatic answer (PLACEHOLDER): stay under cover and play with what the rain brings to the edge — count drips, guess which drip falls first, and listen for one minute without talking. Cost: zero. The experiment: does one minute of listening change what the child notices next?",
+      claim: "-- PLACEHOLDER formalisation (LaTeX-Lean hybrid)\ntheorem rain_porch (kid : Child) (d : Drips) (h : UnderCover kid) :\n    ∃ g : Game, PlayedUnderCover g ∧ Cost g = 0 := by\n  exact ⟨count_the_drips, one_minute_listening, under_cover⟩"
+    },
+    window: {
+      title: "Window weather watch — answer",
+      body: "Pragmatic answer (PLACEHOLDER): watch the rain from inside for ten minutes, feet on the floor, and take turns describing one thing each — a puddle growing, a leaf moving, a car slowing down. Cost: zero. The experiment: does describing the rain out loud make waiting for it to stop feel shorter?",
+      claim: "-- PLACEHOLDER formalisation (LaTeX-Lean hybrid)\ntheorem rain_window (kid : Child) (w : Window) (h : Inside kid) :\n    ∃ s : Story, ToldBy kid s ∧ Cost s = 0 := by\n  exact ⟨one_thing_each, ten_minutes_watching, rain_described⟩"
+    }
+  };
+  var crumbs = document.getElementById("crumbs");
+  var pathStart = document.getElementById("pathStart");
+  var pathReset = document.getElementById("pathReset");
+  var pathOptions = document.getElementById("pathOptions");
+  var pathAnswer = document.getElementById("pathAnswer");
+  var answerTitle = document.getElementById("answerTitle");
+  var answerBody = document.getElementById("answerBody");
+  var answerClaim = document.getElementById("answerClaim");
+  var branchBtns = Array.prototype.slice.call(document.querySelectorAll(".opt[data-branch]"));
+
+  function setCrumbs(text){ crumbs.innerHTML = "Path: " + text; }
+  function clearBranchSelection(){
+    branchBtns.forEach(function(b){ b.setAttribute("aria-pressed", "false"); });
+  }
+  pathStart.addEventListener("click", function(){
+    pathOptions.hidden = false;
+    pathAnswer.hidden = true;
+    pathReset.disabled = false;
+    pathStart.disabled = true;
+    setCrumbs("<b>Question</b> → pick a branch");
+    pathOptions.scrollIntoView({behavior:"smooth", block:"nearest"});
+  });
+  branchBtns.forEach(function(btn){
+    btn.addEventListener("click", function(){
+      var data = BRANCHES[btn.getAttribute("data-branch")];
+      clearBranchSelection();
+      btn.setAttribute("aria-pressed", "true");
+      answerTitle.textContent = data.title;
+      answerBody.textContent = data.body;
+      answerClaim.textContent = data.claim;
+      pathAnswer.hidden = false;
+      setCrumbs("<b>Question</b> → <b>" + btn.textContent + "</b> → answer + formalised claim");
+      pathAnswer.scrollIntoView({behavior:"smooth", block:"nearest"});
+    });
+  });
+  function resetPath(){
+    pathOptions.hidden = true;
+    pathAnswer.hidden = true;
+    clearBranchSelection();
+    pathStart.disabled = false;
+    pathReset.disabled = true;
+    setCrumbs("<b>—</b>");
+  }
+  pathReset.addEventListener("click", resetPath);
+
+  /* Question switcher: eight pressing questions, one answer panel. Switching
+     questions resets the path fully and shows the selected question. */
+  var QUESTION_TEXTS = {
+    play: "“Where can a child play free today?”",
+    trash: "“What can we build from trash and AI today?”",
+    devices: "“What can a device do with a child — without taking over?”",
+    horizontal: "“What can we play lying down — in a horizontal position?”",
+    nothing: "“What can we play with nothing at all — no toys, no screens, no materials?”",
+    waiting: "“How can waiting time become play?”",
+    failure: "“What do we do when the experiment fails?”",
+    rain: "“What can we play outside when it rains?”"
+  };
+  var questionText = document.getElementById("questionText");
+  var branchGroups = {
+    play: document.getElementById("branches-play"),
+    trash: document.getElementById("branches-trash"),
+    devices: document.getElementById("branches-devices"),
+    horizontal: document.getElementById("branches-horizontal"),
+    nothing: document.getElementById("branches-nothing"),
+    waiting: document.getElementById("branches-waiting"),
+    failure: document.getElementById("branches-failure"),
+    rain: document.getElementById("branches-rain")
+  };
+  var qSwitchBtns = Array.prototype.slice.call(document.querySelectorAll(".q-switch[data-question]"));
+  qSwitchBtns.forEach(function(btn){
+    btn.addEventListener("click", function(){
+      var key = btn.getAttribute("data-question");
+      qSwitchBtns.forEach(function(b){ b.setAttribute("aria-pressed", "false"); });
+      btn.setAttribute("aria-pressed", "true");
+      questionText.textContent = QUESTION_TEXTS[key];
+      branchGroups.play.hidden = key !== "play";
+      branchGroups.trash.hidden = key !== "trash";
+      branchGroups.devices.hidden = key !== "devices";
+      branchGroups.horizontal.hidden = key !== "horizontal";
+      branchGroups.nothing.hidden = key !== "nothing";
+      branchGroups.waiting.hidden = key !== "waiting";
+      branchGroups.failure.hidden = key !== "failure";
+      branchGroups.rain.hidden = key !== "rain";
+      resetPath();
+    });
+  });
+
+  /* ---------- 6. Discussion-group onboarding (mock, no data) ---------- */
+  var joinBtn = document.getElementById("joinBtn");
+  var onboardSteps = document.getElementById("onboardSteps");
+  var onboardNav = document.getElementById("onboardNav");
+  var nextStepBtn = document.getElementById("nextStepBtn");
+  var leaveGroupBtn = document.getElementById("leaveGroupBtn");
+  var groupStatus = document.getElementById("groupStatus");
+  var stepItems = Array.prototype.slice.call(onboardSteps.querySelectorAll("li"));
+  var currentStep = 0; // 0 = not joined; 1..3 = current step index+1
+
+  function renderSteps(){
+    stepItems.forEach(function(li, i){
+      li.classList.toggle("done", i < currentStep - 1);
+      li.classList.toggle("current", i === currentStep - 1);
+    });
+    if (currentStep === 0) {
+      groupStatus.textContent = "Status: not joined. No data is collected by this page.";
+    } else if (currentStep <= stepItems.length) {
+      groupStatus.textContent = "Status: onboarding step " + currentStep + " of " + stepItems.length + " (mock).";
+    } else {
+      groupStatus.textContent = "Status: onboarding complete (mock). In the real group the moderator would now welcome you. No data was collected.";
+    }
+    nextStepBtn.textContent = currentStep >= stepItems.length
+      ? "Onboarding complete (mock)"
+      : "Next onboarding step";
+    nextStepBtn.disabled = currentStep > stepItems.length;
+  }
+  joinBtn.addEventListener("click", function(){
+    currentStep = 1;
+    onboardSteps.hidden = false;
+    onboardNav.hidden = false;
+    joinBtn.disabled = true;
+    renderSteps();
+    onboardSteps.scrollIntoView({behavior:"smooth", block:"nearest"});
+  });
+  nextStepBtn.addEventListener("click", function(){
+    if (currentStep <= stepItems.length) { currentStep += 1; renderSteps(); }
+  });
+  leaveGroupBtn.addEventListener("click", function(){
+    currentStep = 0;
+    onboardSteps.hidden = true;
+    onboardNav.hidden = true;
+    joinBtn.disabled = false;
+    stepItems.forEach(function(li){ li.classList.remove("done", "current"); });
+    renderSteps();
+  });
+
+  /* ---------- 6b. One discussion group per channel (PLACEHOLDER details) ---------- */
+  var GROUPS = {
+    nostr: {
+      name: "Free Play — parents' group",
+      question: "“What did your child play today that cost nothing?”"
+    },
+    tiktok: {
+      name: "Hook Lab — short-form group",
+      question: "“What hook held attention for three seconds — and what did it teach?”"
+    },
+    youtube: {
+      name: "Diary Circle — long-form group",
+      question: "“What did today's experiment prove, and what failed honestly?”"
+    },
+    instagram: {
+      name: "Proof Sketch — carousel group",
+      question: "“Which one slide would prove the claim to a stranger?”"
+    }
+  };
+  var groupName = document.getElementById("groupName");
+  var groupQuestion = document.getElementById("groupQuestion");
+  var groupBtns = Array.prototype.slice.call(document.querySelectorAll(".group-btn"));
+  groupBtns.forEach(function(btn){
+    btn.addEventListener("click", function(){
+      var data = GROUPS[btn.getAttribute("data-group")];
+      groupBtns.forEach(function(b){ b.setAttribute("aria-pressed", "false"); });
+      btn.setAttribute("aria-pressed", "true");
+      groupName.innerHTML = data.name + ' <span class="tag ph">PLACEHOLDER</span>';
+      groupQuestion.textContent = data.question;
+      /* Switching groups resets the mock onboarding: no join carries over. */
+      currentStep = 0;
+      onboardSteps.hidden = true;
+      onboardNav.hidden = true;
+      joinBtn.disabled = false;
+      stepItems.forEach(function(li){ li.classList.remove("done", "current"); });
+      renderSteps();
+    });
+  });
+  /* ---------- 5. Per-platform draft outlines (structure only, PLACEHOLDER) ---------- */
+  Array.prototype.slice.call(document.querySelectorAll(".draft-toggle")).forEach(function(btn){
+    btn.addEventListener("click", function(){
+      var panel = document.getElementById(btn.getAttribute("data-draft"));
+      var open = panel.hidden;
+      panel.hidden = !open;
+      btn.setAttribute("aria-expanded", open ? "true" : "false");
+      btn.textContent = open ? "Hide PLACEHOLDER draft outline" : "Show PLACEHOLDER draft outline";
+    });
+  });
+  renderSteps();
+})();
+</script>
+</body>
+</html>
