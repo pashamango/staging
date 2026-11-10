@@ -90,7 +90,7 @@ async function genDid() {
   localStorage.setItem("gig-privkey", JSON.stringify(jwk));
   const a = me() || { complexity: 2, difficulty: 1, topics: ["onboarding"], name: "newcomer" };
   a.did = did; saveMe(a);
-  renderFunnel(); alert("Your did:key (private key stays in this browser, never leaves it):\n" + did);
+  renderFunnel();
 }
 
 function renderFunnel() {
@@ -105,6 +105,7 @@ function renderFunnel() {
     `<div class="step"><b class="${s.done ? "ok" : "todo"}">${s.done ? "✓" : (i + 1) + "."}</b>${s.name}${s.extra}</div>`).join("")
     + `<p style="margin-top:10px"><button onclick="genDid()">Generate my did:key (Ed25519, in-browser)</button>
     <button class="ghost" onclick="breadStep()">Take $5 bread (ledger: gig.py bread)</button></p>
+    <p id="breadCmd" class="dim"></p>
     <p class="dim">Bread and university are recorded by the ledger script after you run the commands — the page only tracks your local checklist. University quiz:</p>
     <p><b>Q1.</b> What is the structural difference between a CVE identifier and a CWE identifier?</p>
     <input id="quizA" placeholder="Answer in your own words…">
@@ -112,8 +113,9 @@ function renderFunnel() {
 }
 function breadStep() {
   const a = me();
-  if (!a || !a.did) { alert("Generate your did:key first (shelter)."); return; }
-  alert("Run in agency.git:\npython3 prototypes/gig-board/gig.py bread --agent " + a.did + "\nThen commit the state so the pot shows it here.");
+  const el = document.getElementById("breadCmd");
+  if (!a || !a.did) { if (el) el.textContent = "Generate your did:key first (shelter)."; return; }
+  if (el) el.textContent = "Run in agency.git: python3 prototypes/gig-board/gig.py bread --agent " + a.did + " — then commit the state so the pot shows it here.";
 }
 function quiz() {
   const a = me();
@@ -122,14 +124,17 @@ function quiz() {
   document.getElementById("quizR").textContent = ok
     ? "✓ Correct — CVE names an instance, CWE classifies the weakness category."
     : "Not yet — say: CVE names a specific instance, CWE classifies the category. Try again.";
-  if (ok && a) { a.university = true; saveMe(a); renderFunnel(); }
+  if (ok && a) {
+    a.university = true; saveMe(a); renderFunnel();
+    document.getElementById("quizR").textContent = "✓ Correct — CVE names an instance, CWE classifies the category. Record it in the ledger: gig.py university --agent " + a.did + ' --answer "…"';
+  }
 }
 
 function renderAll() {
   const st = STATE, t = now();
   document.getElementById("pot").textContent = fmt$(st.pot_usd);
   const tb = document.querySelector("#gigs tbody");
-  tb.innerHTML = st.gigs.map(g => `<tr><td>${g.id} ${g.title}</td><td>${g.complexity} × ${g.difficulty}</td><td>${fmt$(g.R0)}</td><td>${ageDays(g, t)}d</td><td>${g.capable}</td><td><b>${fmt$(reward(g, st, t))}</b></td><td>${g.status}</td></tr>`).join("");
+  tb.innerHTML = st.gigs.map(g => `<tr onclick="showGig('${g.id}')" style="cursor:pointer"><td>${g.id} ${g.title}</td><td>${g.complexity} × ${g.difficulty}</td><td>${fmt$(g.R0)}</td><td>${ageDays(g, t)}d</td><td>${g.capable}</td><td><b>${fmt$(reward(g, st, t))}</b></td><td>${g.status}</td></tr>`).join("");
   const lb = document.querySelector("#board tbody");
   const agents = Object.values(st.agents).sort((x, y) => y.points - x.points);
   lb.innerHTML = agents.length ? agents.map(a => `<tr><td>${a.name}<br><code>${a.did.slice(0, 18)}…</code></td><td>${a.points}</td><td>${a.dones.length}</td><td>${fmt$(a.balance_usd)}</td></tr>`).join("")
@@ -137,17 +142,23 @@ function renderAll() {
   const map = document.getElementById("map");
   map.querySelectorAll(".dot").forEach(d => d.remove());
   const a = me() || { complexity: 2, difficulty: 1, topics: ["onboarding"] };
-  const put = (x, y, cls, title, gid) => {
+  const put = (x, y, cls, title, gid, j) => {
     const d = document.createElement("div");
     d.className = "dot " + cls; d.title = title;
-    d.style.left = (4 + x / 10 * 92) + "%"; d.style.top = (96 - y / 10 * 92) + "%";
+    d.style.left = (4 + x / 10 * 92 + (j || 0) * 2.2) + "%";
+    d.style.top = (96 - y / 10 * 92 - (j || 0) * 3.5) + "%";
     if (gid) d.onclick = () => showGig(gid);
     map.appendChild(d);
   };
-  st.gigs.forEach(g => put(g.complexity, g.difficulty,
-    g.status === "done" ? "done" : "", `${g.id} ${g.title} — R ${fmt$(reward(g, st, t))}`, g.id));
+  put(a.complexity, a.difficulty, "me", "You", null, 0);
+  const seen = {};
+  st.gigs.forEach(g => {
+    const key = g.complexity + "," + g.difficulty;
+    seen[key] = (seen[key] || 0) + 1;
+    put(g.complexity, g.difficulty, g.status === "done" ? "done" : "",
+      `${g.id} ${g.title} — R ${fmt$(reward(g, st, t))}`, g.id, seen[key] - 1);
+  });
   document.querySelectorAll("#map .dot:not(.me)").forEach(d => d.style.background = "#ffb000");
-  put(a.complexity, a.difficulty, "me", "You", null);
   const near = st.gigs.filter(g => g.status === "open").sort((x, y) => dist(a, x) - dist(a, y));
   if (near.length && !document.getElementById("near")) {
     const p = document.createElement("p"); p.id = "near"; p.className = "dim";
