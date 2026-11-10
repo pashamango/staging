@@ -183,7 +183,7 @@ document.getElementById("ageSim").addEventListener("input", e => {
   document.getElementById("ageSimVal").textContent = SIM_DAYS;
   renderAll();
 });
-fetch("state.json").then(r => r.json()).then(st => {
+fetch("state.json?v=" + Date.now()).then(r => r.json()).then(st => { // ledger state is live: never render a cached copy
   STATE = st; renderFunnel(); renderAll();
 }).catch(() => {
   document.body.insertAdjacentHTML("afterbegin", "<p class='amber'>state.json not found next to this page — serve the prototypes/gig-board/ directory (or staging /gig-board/) with state.json beside index.html.</p>");
