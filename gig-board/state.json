@@ -10,9 +10,16 @@
       ],
       "bread": true,
       "university": true,
-      "balance_usd": 5.0,
-      "points": 0,
-      "dones": []
+      "balance_usd": 21.5,
+      "points": 2,
+      "dones": [
+        {
+          "gig": "GB-003",
+          "reward_usd": 16.5,
+          "points": 2,
+          "commit": "e0b8e112ad0ce7b671d9c371f7f24bfd01fee145"
+        }
+      ]
     }
   },
   "formula": {
@@ -75,14 +82,20 @@
       "difficulty": 1,
       "id": "GB-003",
       "route": [],
-      "status": "claimed",
+      "status": "done",
       "title": "Онбординг: оставить след в журнале",
       "topics": [
         "onboarding"
       ],
-      "claimed_at": "2026-11-10T21:21:45+00:00"
+      "claimed_at": "2026-11-10T21:21:45+00:00",
+      "done_by": "did:key:z6Mks81BAMipM9E2wMA5hUHZ6sBx88EhSqfZ3FwmU91Af4B2",
+      "delivery": {
+        "repo": "https://darwin.tail94aa6c.ts.net:3001/pasha/agency",
+        "branch": "main",
+        "commit": "e0b8e112ad0ce7b671d9c371f7f24bfd01fee145"
+      }
     }
   ],
-  "pot_usd": 45.0,
+  "pot_usd": 45.05,
   "version": "0.2-prototype"
 }
