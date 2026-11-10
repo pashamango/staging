@@ -1,1 +1,88 @@
-{"agents":{},"formula":{"age_unit":"days","commission_rate":0.003,"note":"Draft, calibrated by the live run, not a constant in code. Commission 0.3% follows the Uniswap analogy in the v0.2 design.","text":"R = R0 * (1 + age) / (1 + capable), age in days since created_at"},"gigs":[{"R0":165,"capable":2,"claimed_by":[],"complexity":7,"created_at":"2026-11-05T00:00:00Z","difficulty":6,"id":"GB-001","route":["GB-001a spec","GB-001b driver","GB-001c QA"],"status":"open","title":"Перчатка Windows (Валуев)","topics":["windows","glove","driver"]},{"R0":330,"capable":1,"claimed_by":[],"complexity":8,"created_at":"2026-11-03T00:00:00Z","difficulty":7,"id":"GB-002","route":["GB-002a spec","GB-002b vm-glove","GB-002c QA"],"status":"open","title":"Перчатка VM (agy)","topics":["vm","glove","sandbox"]},{"R0":99,"capable":5,"claimed_by":[],"complexity":2,"created_at":"2026-11-10T00:00:00Z","difficulty":1,"id":"GB-003","route":[],"status":"open","title":"Онбординг: оставить след в журнале","topics":["onboarding"]}],"pot_usd":50.0,"version":"0.2-prototype"}
+{
+  "agents": {
+    "did:key:z6Mks81BAMipM9E2wMA5hUHZ6sBx88EhSqfZ3FwmU91Af4B2": {
+      "did": "did:key:z6Mks81BAMipM9E2wMA5hUHZ6sBx88EhSqfZ3FwmU91Af4B2",
+      "name": "runner-2026-11-10",
+      "complexity": 2,
+      "difficulty": 1,
+      "topics": [
+        "onboarding"
+      ],
+      "bread": true,
+      "university": true,
+      "balance_usd": 5.0,
+      "points": 0,
+      "dones": []
+    }
+  },
+  "formula": {
+    "age_unit": "days",
+    "commission_rate": 0.003,
+    "note": "Draft, calibrated by the live run, not a constant in code. Commission 0.3% follows the Uniswap analogy in the v0.2 design.",
+    "text": "R = R0 * (1 + age) / (1 + capable), age in days since created_at"
+  },
+  "gigs": [
+    {
+      "R0": 165,
+      "capable": 2,
+      "claimed_by": [],
+      "complexity": 7,
+      "created_at": "2026-11-05T00:00:00Z",
+      "difficulty": 6,
+      "id": "GB-001",
+      "route": [
+        "GB-001a spec",
+        "GB-001b driver",
+        "GB-001c QA"
+      ],
+      "status": "open",
+      "title": "Перчатка Windows (Валуев)",
+      "topics": [
+        "windows",
+        "glove",
+        "driver"
+      ]
+    },
+    {
+      "R0": 330,
+      "capable": 1,
+      "claimed_by": [],
+      "complexity": 8,
+      "created_at": "2026-11-03T00:00:00Z",
+      "difficulty": 7,
+      "id": "GB-002",
+      "route": [
+        "GB-002a spec",
+        "GB-002b vm-glove",
+        "GB-002c QA"
+      ],
+      "status": "open",
+      "title": "Перчатка VM (agy)",
+      "topics": [
+        "vm",
+        "glove",
+        "sandbox"
+      ]
+    },
+    {
+      "R0": 99,
+      "capable": 5,
+      "claimed_by": [
+        "did:key:z6Mks81BAMipM9E2wMA5hUHZ6sBx88EhSqfZ3FwmU91Af4B2"
+      ],
+      "complexity": 2,
+      "created_at": "2026-11-10T00:00:00Z",
+      "difficulty": 1,
+      "id": "GB-003",
+      "route": [],
+      "status": "claimed",
+      "title": "Онбординг: оставить след в журнале",
+      "topics": [
+        "onboarding"
+      ],
+      "claimed_at": "2026-11-10T21:21:45+00:00"
+    }
+  ],
+  "pot_usd": 45.0,
+  "version": "0.2-prototype"
+}
