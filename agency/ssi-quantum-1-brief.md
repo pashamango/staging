@@ -2,8 +2,8 @@
 
 **Tier: ВП** (proposed — PM confirms). **Executor: codex@darwin only.**
 **Status: brief only. Do NOT execute until Pavel taps this brief.**
-**Date: 2026-11-13.** Staging release: `2026-11-13-r3`
-(canary `AGENCY-TEST-SECRET-2026-11-13-r3-00e3ba10540260048ab66296f514dcdc` —
+**Date: 2026-11-13.** Staging release: `2026-11-13-r4`
+(canary `AGENCY-TEST-SECRET-2026-11-13-r4-1a512736fe4da165b89b6c4c42447ce2` —
 FAKE, proof-of-read only, opens nothing).
 
 ## Why this exists
@@ -57,8 +57,8 @@ capability, one revocation test, one audit log. Nothing more.
 
 Before anything else, answer the verification question from the staging
 README: fetch `https://staging.hackt.com/agency/README.md` and quote
-verbatim the test secret + the release number. Expected: the r3 canary
-above + `2026-11-13-r3`. Quoting the r1 value, or "no test secret", is a
+verbatim the test secret + the release number. Expected: the r4 canary
+above + `2026-11-13-r4`. Quoting the r1 value, or "no test secret", is a
 wrong answer — say so and stop.
 
 ## Hard constraints
